@@ -45,7 +45,7 @@
         </div>
       </li>
     </ul>
-    <div class="add-form">
+    <div id="input-form" class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
         rows="4"></textarea>
@@ -70,8 +70,9 @@
   const divEl = document.querySelector("div");
   const commentElement = document.getElementById("del-comment");
   const listElement = document.getElementById("list");
+  const inputElement = document.getElementById("input-form");
 
-
+  console.log(divEl);
 
   divEl.addEventListener("keypress", (e) => {
     let key = e.which || e.keyCode;
@@ -79,18 +80,22 @@
       buttonElement.click();
     }
   })
-  buttonElement.addEventListener("click", () => {
-
-    if (nameElement.value === " " || textElement.value === " ") {
-      nameElement.classList.add("error") || textElement.classList.add("error");
-      return;
-    } else if (nameElement.value === "" || textElement.value === "") {
-      nameElement.classList.add("error") || textElement.classList.add("error");
+  buttonElement.disabled = true;
+  inputElement.addEventListener("input", () => {
+    buttonElement.disabled = false;
+    if (textElement.value === "") {
+      buttonElement.disabled = true;
       return;
     }
-    nameElement.classList.remove("error");
-    textElement.classList.remove("error");
-
+  })
+  inputElement.addEventListener("input", () => {
+    buttonElement.disabled = false;
+    if (nameElement.value === " ") {
+      buttonElement.disabled = true;
+      return;
+    }
+  })
+  buttonElement.addEventListener("click", () => {
 
 
     const oldListHtml = listElement.innerHTML;
@@ -116,6 +121,7 @@
     nameElement.value = "";
     textElement.value = "";
   })
+
 
   deleteElement.addEventListener('click', () => {
   })
