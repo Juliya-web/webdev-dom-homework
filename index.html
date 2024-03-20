@@ -72,7 +72,6 @@
   const listElement = document.getElementById("list");
   const inputElement = document.getElementById("input-form");
 
-  console.log(divEl);
 
   divEl.addEventListener("keypress", (e) => {
     let key = e.which || e.keyCode;
@@ -83,14 +82,14 @@
   buttonElement.disabled = true;
   inputElement.addEventListener("input", () => {
     buttonElement.disabled = false;
-    if (textElement.value === "") {
+    if (textElement.value === "" || textElement.value === " ") {
       buttonElement.disabled = true;
       return;
     }
   })
   inputElement.addEventListener("input", () => {
     buttonElement.disabled = false;
-    if (nameElement.value === " ") {
+    if (nameElement.value === "" || nameElement.value === " ") {
       buttonElement.disabled = true;
       return;
     }
