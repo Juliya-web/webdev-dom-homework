@@ -80,23 +80,26 @@
     }
   })
   buttonElement.disabled = true;
-  inputElement.addEventListener("input", () => {
+  nameElement.addEventListener("input", () => {
     buttonElement.disabled = false;
-    if (textElement.value === "" || textElement.value === " ") {
+    if (nameElement.value >= 0) {
       buttonElement.disabled = true;
       return;
     }
+
   })
-  inputElement.addEventListener("input", () => {
+  textElement.addEventListener("input", () => {
     buttonElement.disabled = false;
-    if (nameElement.value === "" || nameElement.value === " ") {
+    if (textElement.value >= 0) {
       buttonElement.disabled = true;
       return;
     }
+
   })
   buttonElement.addEventListener("click", () => {
-
-
+    if (nameElement.value && textElement.value) {
+      
+    
     const oldListHtml = listElement.innerHTML;
     listElement.innerHTML = oldListHtml +
       `<li class="comment">
@@ -116,9 +119,11 @@
           </div>
         </div>
       </li>`
-
+    }
     nameElement.value = "";
     textElement.value = "";
+
+    
   })
 
 
