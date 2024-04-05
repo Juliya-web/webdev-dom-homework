@@ -33,11 +33,16 @@
   const buttonElement = document.getElementById("add-button");
   const nameElement = document.getElementById("name");
   const textElement = document.getElementById("text");
-  const deleteElement = document.getElementById("add-btn");
+  const deleteButtonElement = document.getElementById("add-btn");
   const divEl = document.querySelector("div");
   const listElement = document.getElementById("list");
   const inputElement = document.getElementById("input-form");
-  const dateElement = (new Date()).toLocaleString();
+  //время в формате дд.мм.гг 00:00
+  const dateElement = new Date().getDate().toString().padStart(2, '0') + '.' + 
+  new Date().getMonth().toString().padStart(2, '0') + '.' + 
+  new Date().getFullYear().toString().slice(-2) + ' ' + 
+  new Date().toLocaleTimeString().slice(0, -3);
+
   // добавляет обработчики кликов ко всем элементам с классом comment
   //const unitEventListeners = () => {
   // находит все элементы с классом comment в разметке
@@ -67,6 +72,7 @@
       likeActive: false,
     },
   ];
+
 
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
@@ -168,9 +174,13 @@
     textElement.value = "";
 
 
-  })
+  });
 
-  deleteElement.addEventListener('click', () => {
+  deleteButtonElement.addEventListener('click', () => {
+const delVButtonElement = document.querySelectorAll('.comments');
+    let res = comments.pop();
+
+    renderComments();
   })
 </script>
 
