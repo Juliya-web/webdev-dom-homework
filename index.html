@@ -37,40 +37,37 @@
   const divEl = document.querySelector("div");
   const listElement = document.getElementById("list");
   const inputElement = document.getElementById("input-form");
-  //время в формате дд.мм.гг 00:00
-  
 
-  // добавляет обработчики кликов ко всем элементам с классом comment
-  //const unitEventListeners = () => {
-  // находит все элементы с классом comment в разметке
-  //const commentElements = document.querySelectorAll(".comment");
-  // цикл for проходит по каждому элементу в списке
-  //for (const commentElement of commentElements) {
-  // добавляет обработчик клика на конкретный элемент в списке
-  //commentElement.addEventListener('click', () => {
 
-  //})
-  //}
-  //};
-  // массив комментарий
-  const comments = [
+
+
+
+
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
     {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      likeCounter: "3",
-      likeActive: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      text: " Мне нравится как оформлена эта страница! ❤",
-      likeCounter: "75",
-      likeActive: false,
-    },
-  ];
+      method: "GET",
+    });
+    
+  fetchPromise.then((response) => {
+    response.json().then((responseData) => {
+      let appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: (comment.date).toLocaleString(),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        };
+      });
 
-  
+      comments = appComments;
+
+      renderComments();
+    });
+  });
+ 
+  let comments = [];
+
   const renderComments = () => {
     const commentsHtml = comments.map((comment, index) => {
       return `<li class="comment" data-name="${comment.name}, ${comment.text}">
@@ -85,8 +82,8 @@
         </div>
         <div class="comment-footer">
           <div class="likes" data-likes>
-            <span class="likes-counter">${comment.likeCounter}</span>
-            <button data-index="${index}" class="${comment.likeActive ? 'like-button -active-like' : 'like-button'}"></button>
+            <span class="likes-counter">${comment.likes}</span>
+            <button data-index="${index}" class="${comment.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
           </div>
         </div>
       </li>`
@@ -107,14 +104,14 @@
         // получили конкретный лайк
         const index = likesButtonElement.dataset.index;
         // если не поставлен лайк
-        if (comments[index].likeActive === false) {
+        if (comments[index].isLiked === false) {
           // ставим
-          comments[index].likeActive = true;
-          comments[index].likeCounter++; // +1 к счетчику лайков
+          comments[index].isLiked = true;
+          comments[index].likes++; // +1 к счетчику лайков
 
         } else { // или 
-          comments[index].likeActive = false;//убираем лайк
-          comments[index].likeCounter--; //убираем вычитаем лайк
+          comments[index].isLiked = false;//убираем лайк
+          comments[index].likes--; //убираем вычитаем лайк
         }
         renderComments(); //  рендерим
       }
@@ -153,7 +150,7 @@
       buttonElement.disabled = true;
 
       return;
-      
+
     };
 
   });
@@ -171,22 +168,49 @@
   });
 
   // кнопка добавления нового комментария
+
   buttonElement.addEventListener("click", () => {
+    //время в формате дд.мм.гг 00:00
     const dateElement = new Date().getDate().toString().padStart(2, '0') + '.' +
-    new Date().getMonth().toString().padStart(2, '0') + '.' +
-    new Date().getFullYear().toString().slice(-2) + ' ' +
-    new Date().toLocaleTimeString().slice(0, '-3');
+      new Date().getMonth().toString().padStart(2, '0') + '.' +
+      new Date().getFullYear().toString().slice(-2) + ' ' +
+      new Date().toLocaleTimeString().slice(0, '-3');
 
 
     comments.push({
       name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       text: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
       date: dateElement,
-      likeCounter: '0',
-      likeActive: false,
+      likes: '0',
+      isLiked: false,
     });
 
-  
+
+    fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        text: textElement.value,
+        name: nameElement.value,
+      }),
+    }).then((response) => {
+    response.json().then((responseData) => {
+      let appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: (comment.date).toLocaleString(),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        };
+      });
+
+      comments = appComments;
+
+      renderComments();
+    });
+  });
+
 
 
     // очищение поля после добавления
