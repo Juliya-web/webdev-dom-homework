@@ -53,7 +53,7 @@
       let appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: (comment.date).toLocaleString(),
+          date: new Date(comment.date).toLocaleString(),
           text: comment.text,
           likes: comment.likes,
           isLiked: comment.isLiked,
@@ -177,15 +177,6 @@
       new Date().toLocaleTimeString().slice(0, '-3');
 
 
-    comments.push({
-      name: nameElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      text: textElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
-      date: dateElement,
-      likes: '0',
-      isLiked: false,
-    });
-
-
     fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
     {
       method: "POST",
@@ -198,7 +189,7 @@
       let appComments = responseData.comments.map((comment) => {
         return {
           name: comment.author.name,
-          date: (comment.date).toLocaleString(),
+          date: new Date(comment.date).toLocaleString(),
           text: comment.text,
           likes: comment.likes,
           isLiked: comment.isLiked,
