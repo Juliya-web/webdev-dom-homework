@@ -171,19 +171,78 @@
 
   buttonElement.addEventListener("click", () => {
     //время в формате дд.мм.гг 00:00
-    const dateElement = new Date().getDate().toString().padStart(2, '0') + '.' +
-      new Date().getMonth().toString().padStart(2, '0') + '.' +
-      new Date().getFullYear().toString().slice(-2) + ' ' +
-      new Date().toLocaleTimeString().slice(0, '-3');
+    //const dateElement = new Date().getDate().toString().padStart(2, '0') + '.' +
+      //new Date().getMonth().toString().padStart(2, '0') + '.' +
+      //new Date().getFullYear().toString().slice(-2) + ' ' +
+      //new Date().toLocaleTimeString().slice(0, '-3');
 
 
     fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
     {
       method: "POST",
       body: JSON.stringify({
-        text: textElement.value,
-        name: nameElement.value,
+        text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
+        name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
       }),
+    }).then((response) => {
+    response.json().then((responseData) => {
+      let appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleString(),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        };
+      });
+
+      comments = appComments;
+
+      renderComments();
+    });
+
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
+    {
+      method: "GET",
+    });
+    
+  fetchPromise.then((response) => {
+    response.json().then((responseData) => {
+      let appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleString(),
+          text: comment.text,
+          likes: comment.likes,
+          isLiked: comment.isLiked,
+        };
+      });
+
+      comments = appComments;
+
+      renderComments();
+    });
+  });
+  });
+
+  
+
+    // очищение поля после добавления
+    nameElement.value = "";
+    textElement.value = "";
+
+    renderComments();
+  });
+
+  deleteButtonElement.addEventListener('click', () => {
+    const delVButtonElement = document.querySelectorAll('.comments');
+    //let res = comments.pop();
+    const id = 
+
+    fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments/" + id,
+    {
+      method: "DELETE",
     }).then((response) => {
     response.json().then((responseData) => {
       let appComments = responseData.comments.map((comment) => {
@@ -202,18 +261,6 @@
     });
   });
 
-
-
-    // очищение поля после добавления
-    nameElement.value = "";
-    textElement.value = "";
-
-    renderComments();
-  });
-
-  deleteButtonElement.addEventListener('click', () => {
-    const delVButtonElement = document.querySelectorAll('.comments');
-    let res = comments.pop();
 
     renderComments();
   })
