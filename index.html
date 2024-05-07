@@ -9,9 +9,11 @@
 
 <body>
   <div class="container">
+    <div id="hidden">Пожалуйста подождите, комментарии загружаются...</div>
     <ul id="list" class="comments">
       <!-- Список рендериться из JS -->
     </ul>
+    <div id="loader-form" class="add-form loader">Комментарий добавляется...</div>
     <div id="input-form" class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="text" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -25,11 +27,12 @@
   </div>
 </body>
 <style>
-  .error {
-    background-color: red;
+  .loader {
+    display: none;
   }
 </style>
 <script>
+
   const buttonElement = document.getElementById("add-button");
   const nameElement = document.getElementById("name");
   const textElement = document.getElementById("text");
@@ -39,33 +42,31 @@
   const inputElement = document.getElementById("input-form");
 
 
+  const fetchRenderComments = () => {
 
-
-
-const fetchRenderComments = () => {
- return fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
-    {
-      method: "GET",
-    })
-    .then((response) => {
-      return response.json();
-    })
-    .then((responseData) => {
-      comments = responseData.comments.map((comment) => {
-        return {
-          name: comment.author.name,
-          date: new Date(comment.date).toLocaleString(),
-          text: comment.text,
-          likes: comment.likes,
-          isLiked: comment.isLiked,
-        };
+    return fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
+      {
+        method: "GET",
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        comments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date).toLocaleString(),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: comment.isLiked,
+          };
+        });
+        document.getElementById("hidden").style.display = "none";
+        renderComments();
       });
-
-      renderComments();
-    });
   };
 
- 
+
 
   let comments = [];
 
@@ -209,8 +210,11 @@ const fetchRenderComments = () => {
     //   });
 
     // Пример 
-    
-    buttonElement.textContent = 'Элемент добавляется...';
+
+    const loaderElement = document.getElementById('loader-form');
+    loaderElement.style.display = "block";
+    inputElement.style.display = "none";
+
 
     fetch("https://wedev-api.sky.pro/api/v1/Juliya-Abzalova/comments",
       {
@@ -229,24 +233,24 @@ const fetchRenderComments = () => {
       .then(() => {
         return fetchRenderComments();
       })
-      .then((data) => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = 'Написать';
+      .then(() => {
+        loaderElement.style.display = "none";
+        inputElement.style.display = "flex";
+
       });
 
 
-    // очищение поля после добавлен
+    renderComments();
     nameElement.value = "";
     textElement.value = "";
-
-    renderComments();
   });
+
+
+
 
   deleteButtonElement.addEventListener('click', () => {
     const delVButtonElement = document.querySelectorAll('.comments');
     let res = comments.pop();
-
-
     renderComments();
   })
 </script>
