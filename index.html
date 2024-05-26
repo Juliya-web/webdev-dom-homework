@@ -222,13 +222,19 @@
         body: JSON.stringify({
           text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
           name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
+          forceError: true,
         }),
       })
       .then((response) => {
-        return response;
-      })
-      .then((response) => {
-        return response.json();
+        if (response.status === 201) {
+          return response.json();
+        }
+        if (response.status === 400) {
+          throw new Error('Введены некорректные данные');
+        }
+        if (response.status === 500) {
+          throw new Error('Извините сервер упал, попробуйте позже');
+        }
       })
       .then(() => {
         return fetchRenderComments();
@@ -236,13 +242,30 @@
       .then(() => {
         loaderElement.style.display = "none";
         inputElement.style.display = "flex";
+        nameElement.value = "";
+        textElement.value = "";
+      })
+      .catch((error) => {
+        if (error.message === 'Введены некорректные данные') {
+          alert("Имя и комментарий должен содержать более трех символов")
+        }
+        if (error.message === 'Извините сервер упал, попробуйте позже') {
+          alert("Что-то пошло не так, подождите...")
+        
+        } 
+        if (error.message === 'Failed to fetch') {
 
-      });
+          alert("Нет подключения к интернету, введите данные позже")
+        }
+        console.warn(error);
+        loaderElement.style.display = "none";
+        inputElement.style.display = "flex";
+
+      })
 
 
     renderComments();
-    nameElement.value = "";
-    textElement.value = "";
+
   });
 
 
