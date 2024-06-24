@@ -49,7 +49,7 @@
         method: "GET",
       })
       .then((response) => {
-        return response.json();
+        return response.json()
       })
       .then((responseData) => {
         comments = responseData.comments.map((comment) => {
@@ -59,11 +59,28 @@
             text: comment.text,
             likes: comment.likes,
             isLiked: comment.isLiked,
-          };
-        });
+          }
+        })
+      })
+      .then((response) => {
+        if (response.status === 500) {
+          throw new Error('Извините сервер упал, попробуйте позже')
+        }
+      })
+      .finally((response) => {
+        loaderElement.style.display = "none";
+        inputElement.style.display = "block";
         document.getElementById("hidden").style.display = "none";
-        renderComments();
-      });
+      })
+
+      .catch((error) => {
+        if (error.message === 'Извините ошибка сервера, попробуйте позже') {
+          alert("Что-то пошло не так, подождите...")
+        }
+      })
+
+    renderComments();
+    
   };
 
 
@@ -240,8 +257,6 @@
         return fetchRenderComments();
       })
       .then(() => {
-        loaderElement.style.display = "none";
-        inputElement.style.display = "flex";
         nameElement.value = "";
         textElement.value = "";
       })
@@ -249,18 +264,19 @@
         if (error.message === 'Введены некорректные данные') {
           alert("Имя и комментарий должен содержать более трех символов")
         }
-        if (error.message === 'Извините сервер упал, попробуйте позже') {
+        if (error.message === 'Извините ошибка сервера, попробуйте позже') {
           alert("Что-то пошло не так, подождите...")
-        
-        } 
+
+        }
         if (error.message === 'Failed to fetch') {
 
           alert("Нет подключения к интернету, введите данные позже")
         }
         console.warn(error);
+      })
+      .finally(() => {
         loaderElement.style.display = "none";
         inputElement.style.display = "flex";
-
       })
 
 
