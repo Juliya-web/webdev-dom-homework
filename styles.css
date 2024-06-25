@@ -120,10 +120,12 @@ body {
   .add-form-row {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
   }
 
   .add-form-button {
     margin-top: 24px;
+    width: 200px;
     font-size: 24px;
     padding: 10px 20px;
     background-color: #bcec30;
@@ -134,4 +136,7 @@ body {
 
   .add-form-button:hover {
     opacity: 0.9;
+  }
+  .button2 {
+    display: none;
   }
